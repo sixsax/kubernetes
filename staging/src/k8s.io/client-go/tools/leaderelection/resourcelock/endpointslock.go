@@ -24,6 +24,7 @@ import (
 	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
+	"k8s.io/klog"
 )
 
 type EndpointsLock struct {
@@ -39,6 +40,7 @@ type EndpointsLock struct {
 func (el *EndpointsLock) Get() (*LeaderElectionRecord, error) {
 	var record LeaderElectionRecord
 	var err error
+	klog.Infof("1 SIXSIXSIX GET endpointlock.go")
 	el.e, err = el.Client.Endpoints(el.EndpointsMeta.Namespace).Get(el.EndpointsMeta.Name, metav1.GetOptions{})
 	if err != nil {
 		return nil, err

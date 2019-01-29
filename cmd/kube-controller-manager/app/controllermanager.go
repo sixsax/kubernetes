@@ -148,7 +148,7 @@ func ResyncPeriod(c *config.CompletedConfig) func() time.Duration {
 // Run runs the KubeControllerManagerOptions.  This should never exit.
 func Run(c *config.CompletedConfig, stopCh <-chan struct{}) error {
 	// To help debugging, immediately log version
-	klog.Infof("Version: %+v", version.Get())
+	klog.Infof("SIXSIXSIX Version: %+v", version.Get())
 
 	if cfgz, err := configz.New(ConfigzName); err == nil {
 		cfgz.Set(c.ComponentConfig)

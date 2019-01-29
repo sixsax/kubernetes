@@ -30,6 +30,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/util/flowcontrol"
+        "k8s.io/klog"
 )
 
 const (
@@ -222,9 +223,12 @@ func (c *RESTClient) Verb(verb string) *Request {
 	backoff := c.createBackoffMgr()
 
 	if c.Client == nil {
-		return NewRequest(nil, verb, c.base, c.versionedAPIPath, c.contentConfig, c.serializers, backoff, c.Throttle, 0)
+		klog.Infof("1 SIXSIXSIX RESTCLIENT client.go")
+		return NewRequest(nil, verb, c.base, c.versionedAPIPath, c.contentConfig, c.serializers, backoff, c.Throttle, 10)
 	}
+	klog.Infof("2 SIXSIXSIX RESTCLIENT client.go %s", c.Client.Timeout)
 	return NewRequest(c.Client, verb, c.base, c.versionedAPIPath, c.contentConfig, c.serializers, backoff, c.Throttle, c.Client.Timeout)
+	//return NewRequest(c.Client, verb, c.base, c.versionedAPIPath, c.contentConfig, c.serializers, backoff, c.Throttle, 5 * time.Second)
 }
 
 // Post begins a POST request. Short for c.Verb("POST").

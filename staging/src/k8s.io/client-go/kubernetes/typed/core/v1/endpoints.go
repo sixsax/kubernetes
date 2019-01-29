@@ -27,6 +27,7 @@ import (
 	watch "k8s.io/apimachinery/pkg/watch"
 	scheme "k8s.io/client-go/kubernetes/scheme"
 	rest "k8s.io/client-go/rest"
+        "k8s.io/klog"
 )
 
 // EndpointsGetter has a method to return a EndpointsInterface.
@@ -64,6 +65,7 @@ func newEndpoints(c *CoreV1Client, namespace string) *endpoints {
 
 // Get takes name of the endpoints, and returns the corresponding endpoints object, and an error if there is any.
 func (c *endpoints) Get(name string, options metav1.GetOptions) (result *v1.Endpoints, err error) {
+	klog.Infof("1 SIX endpoint.go GET")
 	result = &v1.Endpoints{}
 	err = c.client.Get().
 		Namespace(c.ns).

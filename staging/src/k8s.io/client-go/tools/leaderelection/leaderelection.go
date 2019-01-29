@@ -177,9 +177,18 @@ func (le *LeaderElector) Run(ctx context.Context) {
 	if !le.acquire(ctx) {
 		return // ctx signalled done
 	}
+	defer func() {
+		klog.Infof("1 SIX DEFER AFTER ONSTOPPEDLEADING")
+	}()
 	ctx, cancel := context.WithCancel(ctx)
+	defer func() {
+		klog.Infof("2 SIX DEFER AFTER ONSTOPPEDLEADING")
+	}()
 	defer cancel()
 	go le.config.Callbacks.OnStartedLeading(ctx)
+	defer func() {
+		klog.Infof("3 SIX DEFER AFTER ONSTOPPEDLEADING")
+	}()
 	le.renew(ctx)
 }
 
@@ -241,11 +250,21 @@ func (le *LeaderElector) renew(ctx context.Context) {
 			done := make(chan bool, 1)
 			go func() {
 				defer close(done)
+				defer func (){
+                                	klog.Infof("2 SIX renew DONE VALUE  %v", done)
+				}()
 				done <- le.tryAcquireOrRenew()
 			}()
+			
+			defer func (){
+                        	klog.Infof("0 SIX renew DONE VALUE  %v", timeoutCtx.Done())
+                        }()
 
 			select {
 			case <-timeoutCtx.Done():
+				defer func (){
+                        		klog.Infof("1 SIX renew DONE VALUE  %v", timeoutCtx.Done())
+                        	}()
 				return false, fmt.Errorf("failed to tryAcquireOrRenew %s", timeoutCtx.Err())
 			case result := <-done:
 				return result, nil
@@ -300,7 +319,19 @@ func (le *LeaderElector) tryAcquireOrRenew() bool {
 	}
 
 	// 1. obtain or create the ElectionRecord
+	klog.Infof("1 SIXSIXSIX GET leaderlection.go")
+	
+	var max int = 5
 	oldLeaderElectionRecord, err := le.config.Lock.Get()
+	for retry := true; retry && max > 0; retry = (err != nil) {
+		if err != nil {
+			klog.Infof("RETRY %d",max)
+			max--
+			time.Sleep(1 * time.Second)
+			oldLeaderElectionRecord, err = le.config.Lock.Get()
+		}
+	}
+	
 	if err != nil {
 		if !errors.IsNotFound(err) {
 			klog.Errorf("error retrieving resource lock %v: %v", le.config.Lock.Describe(), err)
