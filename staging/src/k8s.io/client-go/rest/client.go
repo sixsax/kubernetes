@@ -224,7 +224,7 @@ func (c *RESTClient) Verb(verb string) *Request {
 
 	if c.Client == nil {
 		klog.Infof("1 SIXSIXSIX RESTCLIENT client.go")
-		return NewRequest(nil, verb, c.base, c.versionedAPIPath, c.contentConfig, c.serializers, backoff, c.Throttle, 10)
+		return NewRequest(nil, verb, c.base, c.versionedAPIPath, c.contentConfig, c.serializers, backoff, c.Throttle, 0)
 	}
 	klog.Infof("2 SIXSIXSIX RESTCLIENT client.go %s", c.Client.Timeout)
 	return NewRequest(c.Client, verb, c.base, c.versionedAPIPath, c.contentConfig, c.serializers, backoff, c.Throttle, c.Client.Timeout)
